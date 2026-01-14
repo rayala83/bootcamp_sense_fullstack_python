@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Realizar Depósito</title>
+</head>
+<body>
+
+    <input type="number" id="monto-deposito" placeholder="Ingresa el monto a depositar">
+    <button onclick="sumarMonto()">Depositar Dinero</button>
+
+    <br>
+    <a href="menu.html">Volver al Menú</a>
+
+    <script>
+        function sumarMonto() {
+            const inputElemento = document.getElementById('monto-deposito');
+            // Convertimos el valor del input a un número flotante (decimal)
+            const valorASumar = parseFloat(inputElemento.value);
+
+            // Validamos que sea un número válido
+            if (!isNaN(valorASumar) && valorASumar > 0) {
+                // 1. Obtener el saldo actual guardado (si no hay, es 0)
+                let saldoActual = parseFloat(localStorage.getItem('saldoCuenta')) || 0;
+
+                // 2. Realizar la suma
+                let nuevoSaldo = saldoActual + valorASumar;
+
+                // 3. Guardar el nuevo saldo en localStorage
+                localStorage.setItem('saldoCuenta', nuevoSaldo);
+
+                // Opcional: limpiar el input y dar feedback
+                inputElemento.value = '';
+                alert('¡Depósito de $' + valorASumar.toLocaleString('es-CL') + ' realizado con éxito!');
+            } else {
+                alert('Por favor, ingresa una cantidad válida.');
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -11,18 +11,32 @@
 <body>
     <div class="container">
         <h2>Login</h2>
-        <form>
+        <form id="login">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Ingrese Email">
+                <input type="email" class="form-control" id="email" placeholder="Ingrese Email" required>
             </div>
             <div class="form-group">
-                <label for="password">Email</label>
-                <input type="password" class="form-control" id="password" placeholder="Ingrese Password">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Ingrese Password" required>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
-        </form>
-        <a href="menu.html" class="btn btn-secondary">Ir al Menú Principal</a>
+        </form>       
     </div>
+    <script>
+        const form = document.getElementById('login');
+        form.addEventListener('submit', event=>{
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (email === 'email@email.com' && password === '12345'){
+                alert('inicio de sesion exitoso')
+                window.location.href = 'menu.html'
+            }else{
+                alert('credencales incorrectas, intente nuevamente')
+            }
+        });
+    </script>
 </body>
 </html>

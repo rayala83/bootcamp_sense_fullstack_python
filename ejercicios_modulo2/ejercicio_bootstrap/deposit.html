@@ -12,11 +12,47 @@
     <form>
       <div class="form-group">
         <label for="depositAmount">Monto a depositar:</label>
-        <input type="number" class="form-control" id="depositAmount" placeholder="Enter amount">
+        <input type="number" class="form-control" id="monto-deposito" placeholder="Enter amount">
       </div>
-      <button type="submit" class="btn btn-primary">Realizar depósito</button>
+      <button type="submit" onclick="sumarMonto()" class="btn btn-primary">Realizar depósito</button>
     </form>
-    <a href="menu.html" class="btn btn-secondary">Volver al Menú Principal</a>
+    <a href="menu.html"  class="btn btn-secondary">Volver al Menú Principal</a>
   </div>
+    <script>
+        function sumarMonto() {
+            const inputElemento = document.getElementById('monto-deposito');
+            const valorASumar = parseFloat(inputElemento.value);
+
+            
+            if (!isNaN(valorASumar) && valorASumar > 0) {
+                let saldoActual = parseFloat(localStorage.getItem('saldoCuenta')) || 0;
+                let nuevoSaldo = saldoActual + valorASumar;
+                localStorage.setItem('saldoCuenta', nuevoSaldo);
+                // registrarMovimiento('Depósito', montoIngresado, 'Carga de saldo en cuenta');
+                inputElemento.value = '';
+                alert('¡Depósito de $' + valorASumar.toLocaleString('es-CL') + ' realizado con éxito!');
+            } else {
+                alert('Por favor, ingresa una cantidad válida.');
+            }
+        }
+        function registrarMovimiento(tipo, monto, detalle) {
+            // 1. Obtener historial actual o crear uno vacío
+            let historial = JSON.parse(localStorage.getItem('historialMovimientos')) || [];
+            
+            // 2. Crear el nuevo movimiento
+            const nuevoMovimiento = {
+                tipo: tipo, // 'Depósito' o 'Transferencia'
+                monto: monto.toFixed(2),
+                detalle: detalle,
+                fecha: new Date().toLocaleString()
+            };
+            
+            // 3. Guardar al principio de la lista (el más reciente primero)
+            historial.unshift(nuevoMovimiento);
+            
+            // 4. Guardar de nuevo en localStorage
+            localStorage.setItem('historialMovimientos', JSON.stringify(historial));
+        }
+    </script>
 </body>
 </html>

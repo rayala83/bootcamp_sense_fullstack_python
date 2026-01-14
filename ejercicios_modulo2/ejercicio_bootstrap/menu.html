@@ -14,14 +14,38 @@
 
         <div class="form-group">
             <label for="balance">Dinero en Cuenta</label>
-            <h3>$60.000</h3>
+            <h3 id="saldo-cuenta">$60.000</h3>
         </div>
 
-        <a href="deposit.html" class="btn btn-primary">Depositar</a>
-        <a href="sendmoney.html" class="btn btn-primary">Enviar Dinero</a>
-        <a href="transactions.html" class="btn btn-primary">Últimos Movimientos</a>
+        <button class="btn-redirect btn btn-primary" data-url="deposit.html">Depositar</button>
+        <button class="btn-redirect btn btn-primary" data-url="sendmoney.html">Enviar Dinero</button>
+        <button class="btn-redirect btn btn-primary" data-url="transactions.html">Últimos Movimientos</button>
     
     </div>
+    <script>
+        const botonRedirect = document.querySelectorAll('.btn-redirect');
+        botonRedirect.forEach(boton=>{
+            boton.addEventListener('click', function(){
+                const url = this.dataset.url;
+                const destino = url.replace('.html','');
+                alert('redirigiendo a '+ destino)
+                if(url){
+                    window.location.href = url;
+                } 
+                
+            });
+        });
+
+        function cargarSaldo() {
+            
+            const saldoGuardado = localStorage.getItem('saldoCuenta') || 0;
+            document.getElementById('saldo-cuenta').textContent = saldoGuardado;
+        }
+
+        cargarSaldo();
+        window.addEventListener('storage', cargarSaldo);
+
+    </script>
 
 </body>
 </html>

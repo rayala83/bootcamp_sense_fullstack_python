@@ -1,37 +1,170 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
   <title>Enviar Dinero</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="style.css">
-
+  <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
   <div class="container">
     <h2>Enviar Dinero</h2>
-    <form>
+    
+    <p>Tu saldo actual: $<strong id="saldoActualDisplay">0.00</strong></p>
+
+   
+    <form id="formTransferencia">
       <div class="form-group">
-        <label for="searchContact">Buscar en la agenda de transferencias:</label>
-        <input type="text" class="form-control" id="searchContact" placeholder="Search contact">
+        <label for="destinatario">Seleccionar Contacto:</label>
+        <!-- Usaremos JS para llenar este SELECT con contactos estáticos -->
+        <select class="form-control" id="destinatario" required>
+          <option value="">Selecciona un contacto...</option>
+        </select>
       </div>
-      <button type="submit" class="btn btn-primary">Agregar nuevo contacto</button>
- <h3>Contactos</h3>
-  <ul id="contactList" class="list-group">
-    <li class="list-group-item">
-      <div class="contact-info">
-        <span class="contact-name">John Doe</span>
-        <span class="contact-details">CBU: 123456789, Alias: john.doe, Banco: ABC Bank</span>
+      
+      <div class="form-group">
+        <label for="monto">Monto a Transferir ($):</label>
+        <input type="number" class="form-control" id="monto" min="0.01" step="0.01" required>
       </div>
-    </li>
-    <li class="list-group-item">
-      <div class="contact-info">
-        <span class="contact-name">Jane Smith</span>
-        <span class="contact-details">CBU: 987654321, Alias: jane.smith, Banco: XYZ Bank</span>
-      </div>
-    </li>
-      <button type="submit" class="btn btn-primary">Enviar dinero</button>
+
+      <button type="submit" class="btn btn-primary">Realizar Transferencia</button>
     </form>
-    <a href="menu.html" class="btn btn-secondary">Volver al Menú Principal</a>
+    
+    <hr>
+    <button type="submit" onclick="abrirFormulario()" class="btn btn-primary">Agregar nuevo contacto</button>
+    <a href="menu.html" class="btn btn-secondary mt-3">Volver al Menú Principal</a>
+    
+    <!-- Tu botón y overlay para "Agregar nuevo contacto" (funcionalidad extra) -->
+    <!-- ... (El código del popup para agregar contacto que tenías antes) ... -->
   </div>
+
+  <!-- Tu bloque de Overlay/Popup que ya tenías -->
+  <div id="miOverlay" class="overlay">
+    <div class="popup">
+      <h2>Contacto</h2>
+      <span class="cerrar" onclick="cerrarFormulario()">&times;</span>
+      <form action="#">
+        <label for="nombre">Nombre y Apellido:</label>
+        <input type="text" id="nombre" name="nombre" required>
+        
+        <label for="rut">Rut:</label>
+        <input type="rut" id="rut" name="rut" required>
+
+        <label for="alias">Alias:</label>
+        <input type="alias" id="alias" name="alias" required>
+
+        <label for="banco">Nombre Banco:</label>
+        <input type="banco" id="banco" name="banco" required>
+        
+        <button type="submit">Enviar Datos</button>
+      </form>
+    </div>
+  </div>
+
+
+  <script>
+    // --- Lógica del Pop-up (la que ya tenías) ---
+    function abrirFormulario() {
+      document.getElementById("miOverlay").style.display = "block";
+    }
+    function cerrarFormulario() {
+      document.getElementById("miOverlay").style.display = "none";
+    }
+
+    // --- Lógica de Transferencia (Nueva) ---
+
+    // Lista estática de usuarios disponibles para transferencia
+    const USUARIOS = [
+        { id: 'user1', nombre: 'John Doe', alias: 'john.doe' },
+        { id: 'user2', nombre: 'Jane Smith', alias: 'jane.smith' },
+        { id: 'user3', nombre: 'Charlie Brown', alias: 'charlie.b' }
+    ];
+
+    const SALDO_KEY = 'saldoCuenta';
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        cargarSaldoActual();
+        llenarSelectorContactos();
+        // Conectar el formulario de transferencia con la función de JS
+        document.getElementById('formTransferencia').addEventListener('submit', manejarTransferencia);
+    });
+
+    function cargarSaldoActual() {
+        const saldo = parseFloat(localStorage.getItem(SALDO_KEY)) || 0;
+        document.getElementById('saldoActualDisplay').textContent = saldo.toFixed(2);
+    }
+
+    function llenarSelectorContactos() {
+        const select = document.getElementById('destinatario');
+        USUARIOS.forEach(usuario => {
+            const option = document.createElement('option');
+            option.value = usuario.id;
+            option.textContent = `${usuario.nombre} (${usuario.alias})`;
+            select.appendChild(option);
+        });
+    }
+
+    function manejarTransferencia(event) {
+        event.preventDefault(); // EVITA que la página se recargue
+
+        const destinatarioId = document.getElementById('destinatario').value;
+        const montoATransferir = parseFloat(document.getElementById('monto').value);
+        
+        let saldoActual = parseFloat(localStorage.getItem(SALDO_KEY)) || 0;
+
+        if (!destinatarioId) {
+            alert("Por favor, selecciona un destinatario válido.");
+            return;
+        }
+
+        if (montoATransferir <= 0 || isNaN(montoATransferir)) {
+            alert("Ingresa un monto válido.");
+            return;
+        }
+
+        if (saldoActual >= montoATransferir) {
+            // Lógica Central: Restar el dinero
+            saldoActual -= montoATransferir;
+            
+            // Guardar el nuevo saldo en localStorage (persistencia)
+            localStorage.setItem(SALDO_KEY, saldoActual.toFixed(2));
+
+            // registrarMovimiento('Transferencia enviada', montoATransferir, `Para: ${destinatarioNombre}`);
+
+            // Informar al usuario y redirigir
+            alert(`Transferencia de $${montoATransferir.toFixed(2)} realizada con éxito a ${destinatarioId}.`);
+            
+            // Redirigir de vuelta al menú principal
+            window.location.href = 'menu.html';
+
+        } else {
+            alert("Saldo insuficiente para esta operación.");
+        }
+    }
+    function registrarMovimiento(tipo, monto, detalle) {
+        // 1. Obtener historial actual o crear uno vacío
+        let historial = JSON.parse(localStorage.getItem('historialMovimientos')) || [];
+        
+        // 2. Crear el nuevo movimiento
+        const nuevoMovimiento = {
+            tipo: tipo, // 'Depósito' o 'Transferencia'
+            monto: monto.toFixed(2),
+            detalle: detalle,
+            fecha: new Date().toLocaleString()
+        };
+        
+        // 3. Guardar al principio de la lista (el más reciente primero)
+        historial.unshift(nuevoMovimiento);
+        
+        // 4. Guardar de nuevo en localStorage
+        localStorage.setItem('historialMovimientos', JSON.stringify(historial));
+    }
+
+  </script>
 </body>
 </html>
+
+ 
+ 
+ 
+ 
+ 

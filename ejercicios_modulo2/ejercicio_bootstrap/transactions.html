@@ -7,16 +7,66 @@
 </head>
 <body>
   <div class="container">
-    <h2>Últimos Movimientos</h2>
-    <ul class="list-group">
-      <li class="list-group-item">Compra en línea - $50.00</li>
-      <li class="list-group-item">Depósito - $100.00</li>
-      <li class="list-group-item">Transferencia recibida - $75.00</li>
-      <li class="list-group-item">Compra en línea - $5550.00</li>
-      <li class="list-group-item">Depósito misma cuenta - $10500.00</li>
-      <li class="list-group-item">Transferencia recibida - $7575.00</li>
+    <h2 class="my-4">Últimos Movimientos</h2>
+    
+    <!-- Contenedor donde se cargarán los movimientos -->
+    <ul id="listaMovimientos" class="list-group">
+      <!-- Los movimientos se insertarán aquí con JS -->
     </ul>
-    <a href="menu.html" class="btn btn-secondary">Volver al Menú Principal</a>
+
+    <div id="mensajeVacio" class="alert alert-info mt-3" style="display: none;">
+      Aún no tienes movimientos registrados.
+    </div>
+
+    <a href="menu.html" class="btn btn-secondary mt-4">Volver al Menú Principal</a>
+    <button onclick="limpiarHistorial()" class="btn btn-outline-danger mt-4">Limpiar Historial</button>
   </div>
+
+  <script>
+    function cargarMovimientos() {
+        const lista = document.getElementById('listaMovimientos');
+        const mensajeVacio = document.getElementById('mensajeVacio');
+        
+        // Obtener datos de localStorage
+        const historial = JSON.parse(localStorage.getItem('historialMovimientos')) || [];
+
+        if (historial.length === 0) {
+            mensajeVacio.style.display = 'block';
+            return;
+        }
+
+        // Limpiar lista por si acaso y recorrer el historial
+        lista.innerHTML = '';
+        historial.forEach(mov => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            
+            // Color según tipo de movimiento
+            const colorMonto = mov.tipo.includes('Depósito') ? 'text-success' : 'text-danger';
+            const signo = mov.tipo.includes('Depósito') ? '+' : '-';
+
+            li.innerHTML = `
+                <div>
+                    <strong>${mov.tipo}</strong> <br>
+                    <small class="text-muted">${mov.detalle} - ${mov.fecha}</small>
+                </div>
+                <span class="badge ${colorMonto} badge-pill" style="font-size: 1.1em;">
+                    ${signo} $${mov.monto}
+                </span>
+            `;
+            lista.appendChild(li);
+        });
+    }
+
+    function limpiarHistorial() {
+        if(confirm("¿Seguro que quieres borrar todos los registros?")) {
+            localStorage.removeItem('historialMovimientos');
+            location.reload();
+        }
+    }
+
+    // Ejecutar al cargar la página
+    document.addEventListener('DOMContentLoaded', cargarMovimientos);
+  </script>
 </body>
 </html>

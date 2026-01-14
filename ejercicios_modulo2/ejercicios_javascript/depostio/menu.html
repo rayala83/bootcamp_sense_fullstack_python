@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Principal</title>
+</head>
+<body>
+
+    <h3>Dinero en la cuenta: $<span id="saldo-cuenta">0</span></h3>
+
+    <a href="deposito.html">Ir a Depósito</a>
+
+    <script>
+        // Esta función se ejecuta cada vez que cargas la página.
+        function cargarSaldo() {
+            // Intenta obtener el saldo guardado. Si no existe, usa 0 como valor inicial.
+            const saldoGuardado = localStorage.getItem('saldoCuenta') || 0;
+            // Actualiza el texto dentro del <span>.
+            document.getElementById('saldo-cuenta').textContent = formatNumber(saldoGuardado);
+        }
+
+        // Función de utilidad para formatear el número con puntos/comas si lo deseas.
+        function formatNumber(num) {
+            return parseFloat(num).toLocaleString('es-CL'); // Formato chileno con comas
+        }
+
+        // Carga el saldo inicial al abrir la página.
+        cargarSaldo();
+
+        // Escucha si el localStorage cambia desde la página de depósito (para actualización automática)
+        window.addEventListener('storage', cargarSaldo);
+    </script>
+
+</body>
+</html>
