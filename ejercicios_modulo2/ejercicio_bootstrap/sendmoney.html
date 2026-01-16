@@ -15,7 +15,7 @@
     <form id="formTransferencia">
       <div class="form-group">
         <label for="destinatario">Seleccionar Contacto:</label>
-        <!-- Usaremos JS para llenar este SELECT con contactos estáticos -->
+      
         <select class="form-control" id="destinatario" required>
           <option value="">Selecciona un contacto...</option>
         </select>
@@ -32,12 +32,10 @@
     <hr>
     <button type="submit" onclick="abrirFormulario()" class="btn btn-primary">Agregar nuevo contacto</button>
     <a href="menu.html" class="btn btn-secondary mt-3">Volver al Menú Principal</a>
-    
-    <!-- Tu botón y overlay para "Agregar nuevo contacto" (funcionalidad extra) -->
-    <!-- ... (El código del popup para agregar contacto que tenías antes) ... -->
+
   </div>
 
-  <!-- Tu bloque de Overlay/Popup que ya tenías -->
+
   <div id="miOverlay" class="overlay">
     <div class="popup">
       <h2>Contacto</h2>
@@ -62,7 +60,7 @@
 
 
   <script>
-    // --- Lógica del Pop-up (la que ya tenías) ---
+    
     function abrirFormulario() {
       document.getElementById("miOverlay").style.display = "block";
     }
@@ -70,9 +68,7 @@
       document.getElementById("miOverlay").style.display = "none";
     }
 
-    // --- Lógica de Transferencia (Nueva) ---
 
-    // Lista estática de usuarios disponibles para transferencia
     const USUARIOS = [
         { id: 'user1', nombre: 'John Doe', alias: 'john.doe' },
         { id: 'user2', nombre: 'Jane Smith', alias: 'jane.smith' },
@@ -84,7 +80,6 @@
     document.addEventListener('DOMContentLoaded', (event) => {
         cargarSaldoActual();
         llenarSelectorContactos();
-        // Conectar el formulario de transferencia con la función de JS
         document.getElementById('formTransferencia').addEventListener('submit', manejarTransferencia);
     });
 
@@ -104,7 +99,7 @@
     }
 
     function manejarTransferencia(event) {
-        event.preventDefault(); // EVITA que la página se recargue
+        event.preventDefault(); 
 
         const destinatarioId = document.getElementById('destinatario').value;
         const montoATransferir = parseFloat(document.getElementById('monto').value);
@@ -122,18 +117,16 @@
         }
 
         if (saldoActual >= montoATransferir) {
-            // Lógica Central: Restar el dinero
+        
             saldoActual -= montoATransferir;
             
-            // Guardar el nuevo saldo en localStorage (persistencia)
+            
             localStorage.setItem(SALDO_KEY, saldoActual.toFixed(2));
 
-            // registrarMovimiento('Transferencia enviada', montoATransferir, `Para: ${destinatarioNombre}`);
 
-            // Informar al usuario y redirigir
             alert(`Transferencia de $${montoATransferir.toFixed(2)} realizada con éxito a ${destinatarioId}.`);
             
-            // Redirigir de vuelta al menú principal
+         
             window.location.href = 'menu.html';
 
         } else {
@@ -141,21 +134,21 @@
         }
     }
     function registrarMovimiento(tipo, monto, detalle) {
-        // 1. Obtener historial actual o crear uno vacío
+        
         let historial = JSON.parse(localStorage.getItem('historialMovimientos')) || [];
         
-        // 2. Crear el nuevo movimiento
+       
         const nuevoMovimiento = {
-            tipo: tipo, // 'Depósito' o 'Transferencia'
+            tipo: tipo, 
             monto: monto.toFixed(2),
             detalle: detalle,
             fecha: new Date().toLocaleString()
         };
         
-        // 3. Guardar al principio de la lista (el más reciente primero)
+       
         historial.unshift(nuevoMovimiento);
         
-        // 4. Guardar de nuevo en localStorage
+        
         localStorage.setItem('historialMovimientos', JSON.stringify(historial));
     }
 
